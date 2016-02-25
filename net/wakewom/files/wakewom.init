@@ -19,10 +19,10 @@
 START=99
 STOP=10
 
-NAME=wifi_auto_power
+NAME=wakewom
 PID_FILE="/var/run/${NAME}.pid"
 #Configuration file
-CONF_FILE="/etc/config/wifi_auto_power"
+CONF_FILE="/etc/config/wakewom"
 
 load_configuration () {
 	
@@ -31,7 +31,7 @@ load_configuration () {
 		echo "Configuration file: '${CONF_FILE}' doesnt exist"
 		exit 1
 	fi
-	source "/etc/config/wifi_auto_power" 
+	source "${CONF_FILE}" 
 }
 
 check_mode_monitor () {
@@ -152,7 +152,7 @@ daemon_wifi_power () {
 
 
 reload() {
-	kill -SIGHUP $(cat "${PID_FILE}")
+	restart
 	return 0
 }
 
@@ -160,6 +160,7 @@ restart() {
 	stop
 	sleep 1
 	start
+	return 0
 }
 
 start() {

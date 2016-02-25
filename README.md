@@ -24,15 +24,19 @@ You can install manually on your openwrt:
 - Copy wakewom.init to /etc/init.d/wakewom
 - Copy wakewom.config to /etc/config/wakewom
 
-Edit /etc/config/wakewom with your local config.
+## First run
 
-After that run:
+First check the configuration file has your info and the mac of your devices:
 
-/etc/init.d/wakewom start
+> /etc/config/wakewom
+
+Start the service:
+
+> /etc/init.d/wakewom start
 
 If you want to install the service, so you have the service running after reboot:
 
-/etc/init.d/wakewom enable
+> /etc/init.d/wakewom enable
 
 ## License
 

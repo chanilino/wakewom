@@ -5,7 +5,7 @@ This is a script for openwrt. The idea is auto power on the wifi when you are go
 - It powers on the wifi when detects one or more hardware address previously configurated. 
 - It powers off the wifi when there is no client connected in a time. This time is configurable too.
 
-It needs tcpdump or tcpdump-mini installed to work. It needs that your wifi card suppor monitor mode.
+It needs tcpdump or tcpdump-mini installed to work. It needs that your wifi card supports monitor mode.
 
 ## Install on Openwrt
 

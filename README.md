@@ -24,6 +24,9 @@ You can install manually on your openwrt:
 - Copy wakewom.init to /etc/init.d/wakewom
 - Copy wakewom.config to /etc/config/wakewom
 
+Check that you have installed iw and tcpdump or tcpdump-mini on your openwrt. 
+
+
 ## First run
 
 First check the configuration file has your info and the mac of your devices:

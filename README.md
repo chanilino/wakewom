@@ -1,4 +1,4 @@
-# Wake Wifi On mac detection
+# Wake Wifi On Mac detection
 
 This is a script for openwrt. The idea is auto power on the wifi when you are going to __use__ it, and auto power off when you are __not__ going to use it. Your router power on the wifi when you activate the wifi of your device.
 

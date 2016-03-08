@@ -135,7 +135,7 @@ daemon_wifi_power () {
 		ifconfig wwmon0 up
 
 		#Wait for a Mac
-		tcpdump -qNKni wwmon0 ether  src ${MAC_ADDRESS} -c 2 -s 6 > /dev/null 2>&1  &
+		tcpdump -qNKni wwmon0 ether  src ${MAC_ADDRESS} -c 2 -s 6 -w /dev/null > /dev/null 2>&1  &
 		PID_TCPDUMP=$!
 		echo "${PID_TCPDUMP}" >> "${PID_FILE}"
 		wait ${PID_TCPDUMP}

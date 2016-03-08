@@ -1,4 +1,4 @@
-#!/bin/sh  /etc/rc.common
+#!/bin/sh 
 
 #Copyright (C) 2015  Eduardo Granados
 #
@@ -16,13 +16,10 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-START=99
-STOP=10
-
-NAME=wakewom
-PID_FILE="/var/run/${NAME}.pid"
 #Configuration file
-CONF_FILE="/etc/config/wakewom"
+NAME=wakewom
+CONF_FILE="/etc/config/${NAME}"
+PID_FILE="/var/run/${NAME}.pid"
 
 load_configuration () {
 	
@@ -32,6 +29,7 @@ load_configuration () {
 		exit 1
 	fi
 	source "${CONF_FILE}" 
+	echo "Configuration loaded from '${CONF_FILE}'"
 }
 
 check_mode_monitor () {
@@ -41,6 +39,7 @@ check_mode_monitor () {
 				echo "Error: interface '${PHY_W}' does not support mode monitor. Exiting"
 				exit 1
 		fi
+		echo "Interface '${PHY_W}' supports mode monitor"
 }
 
 check_config () {
@@ -69,6 +68,7 @@ check_config () {
 				echo "Error: MAC_ADDRESS: '${MAC_ADDRESS}' is not a valid mac or macs separated by ||"
 				exit 1
 		fi
+		echo "Configuration is ok. SECONDS_BETWEEN_CHECK: '${SECONDS_BETWEEN_CHECK}'; TIMES_TO_BE_CHECKED_TO_0: '${TIMES_TO_BE_CHECKED_TO_0}'; MAC_ADDRESS: '${MAC_ADDRESS}'"
 }
 
 
@@ -93,18 +93,19 @@ clean_up_interfaces () {
 clean_up () {
 	clean_up_interfaces
 	rm -f "${PID_FILE}"
+	echo "Cleaning up ${NAME}"
 	exit
 }
 
 
 daemon_wifi_power () {
-
+	echo "Starting ${NAME}"
 	load_configuration
 	check_mode_monitor	
 	check_config
 	clean_up_interfaces
 	
-	trap load_configuration SIGHUP 
+#	trap load_configuration SIGHUP 
 	trap clean_up SIGINT SIGTERM
 
 	COUNT=0
@@ -120,6 +121,7 @@ daemon_wifi_power () {
 			COUNT=$((COUNT+1))
 			if [ ${TIMES_TO_BE_CHECKED_TO_0} -gt ${COUNT} ]
 			then
+				echo "No clients connected. Times to be checked; ${TIMES_TO_BE_CHECKED_TO_0} each ${SECONDS_BETWEEN_CHECK} secs. Now count is ${COUNT}"
 				#Check again 
 				continue
 			fi
@@ -129,54 +131,29 @@ daemon_wifi_power () {
 			continue
 		fi
 		
+		echo "No clients connected. Setting up mode monitor"
 		#If a reach here I create the monitor
 		iw phy ${PHY_W} interface add wwmon0 type monitor
 		ifconfig ${WLAN} down
 		ifconfig wwmon0 up
 
 		#Wait for a Mac
+		echo "No clients connected. Wait for configured devices: '${MAC_ADDRESS}'"
 		tcpdump -qNKni wwmon0 ether  src ${MAC_ADDRESS} -c 2 -s 6 -w /dev/null > /dev/null 2>&1  &
 		PID_TCPDUMP=$!
 		echo "${PID_TCPDUMP}" >> "${PID_FILE}"
 		wait ${PID_TCPDUMP}
+		echo "Clients detected. Setting up wifi ap on ${WLAN}"
 		sed -i "/${PID_TCPDUMP}/d" "${PID_FILE}"
 		#Destroy monitor and start again
 		ifconfig wwmon0 down
 		iw dev wwmon0 del
 		ifconfig ${WLAN} up
 		wifi
+		echo "Wifi ap on ${WLAN} is up"
 		COUNT=0
 	done
 }
 
+daemon_wifi_power 
 
-
-reload() {
-	restart
-	return 0
-}
-
-restart() {
-	stop
-	sleep 1
-	start
-	return 0
-}
-
-start() {
-#	set -x
-	if [ -e "${PID_FILE}" ] && kill -0 $(cat "${PID_FILE}" )  > /dev/null 2>&1 
-	then
-		echo "${NAME}: Already running."
-		exit 1
-	fi
-	(daemon_wifi_power ) &
-	PID=$!
-	echo ${PID} > ${PID_FILE}
-	return 0
-}
-
-stop() {
-	kill $(cat "${PID_FILE}")
-	return 0
-}

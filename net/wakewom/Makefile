@@ -58,6 +58,8 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/files/wakewom.init $(1)/etc/init.d/wakewom
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/files/wakewom.config $(1)/etc/config/wakewom
+	$(INSTALL_DIR) $(1)/usr/lib/wakewon
+	$(INSTALL_CONF) $(PKG_BUILD_DIR)/files/wakewom.sh $(1)/usr/lib/wakewon/wakewom.sh
 endef
 
 define Package/$(PKG_NAME)/prerm

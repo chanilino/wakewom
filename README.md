@@ -12,7 +12,7 @@ It needs that your wifi card supports __monitor mode__.
 ## Install on Openwrt
 
 You can  download the [installable file](https://github.com/chanilino/wakewom/releases/download/v1.0.0/wakewom_1.0.0-1_all.ipk)
-from [downloads section](https://github.com/chanilino/wakewom/releases/download/)
+from [downloads section](https://github.com/chanilino/wakewom/releases#download)
 
 Now you have to upload to your openwrt and  execute:
 > opkg install wakewom_1.0.0-1_all.ipk
